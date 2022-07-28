@@ -32,7 +32,7 @@ contract StakingDappTest is Test {
             stakeToken.balanceOf(address(stakingDapp)),
             1000000 * 10**uint256(18)
         );
-
+        rewardToken.approve(address(stakingDapp), 1000000 * 10**uint256(18));
         rewardToken.transfer(address(stakingDapp), 1000000 * 10**uint256(18));
         assertEq(
             rewardToken.balanceOf(address(stakingDapp)),
@@ -43,14 +43,24 @@ contract StakingDappTest is Test {
     function testBuyToken() public {
         // buy
 
-        vm.startPrank(player);
-
         stakingDapp.buyToken{value: 1 ether}(1000 * 10**uint256(18));
-        assertEq(stakingDapp.getStakeToken(player), 1000 * 10**uint256(18));
-        assertEq(stakingDapp.balanceOfToken(player), 1000 * 10**uint256(18));
-
-        vm.stopPrank();
+        assertEq(
+            stakingDapp.getStakeToken(address(this)),
+            1000 * 10**uint256(18)
+        );
+        assertEq(
+            stakingDapp.balanceOfToken(address(this)),
+            1000 * 10**uint256(18)
+        );
 
         assertEq(stakingDapp.getContractETHBalance(), 1 ether);
+    }
+
+    function testStake() public {
+        stakingDapp.buyToken{value: 1 ether}(1000 * 10**uint256(18));
+
+        stakingDapp.stake(1000 * 10**uint256(18));
+
+        console.log(stakingDapp.getStakeToken(address(this)));
     }
 }
