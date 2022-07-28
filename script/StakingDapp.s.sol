@@ -20,6 +20,8 @@ contract DeployStakingDapp is Script {
             address(stakeToken),
             address(rewardToken)
         );
+        //rewardToken.transfer(address(stakingDapp), 1000000 * 10**uint256(18));
+        //stakeToken.transfer(address(stakingDapp), 1000000 * 10**uint256(18));
 
         vm.stopBroadcast();
     }

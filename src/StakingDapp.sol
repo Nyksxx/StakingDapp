@@ -30,10 +30,10 @@ contract StakingDapp {
     uint256 public constant REWARD_RATE = 100;
     uint256 public lastTimeStamp;
 
-    mapping(address => uint256) balanceOfToken;
-    mapping(address => uint256) stakeBalance;
-    mapping(address => uint256) userRewardPerToken;
-    mapping(address => uint256) rewards;
+    mapping(address => uint256) public balanceOfToken;
+    mapping(address => uint256) public stakeBalance;
+    mapping(address => uint256) public userRewardPerToken;
+    mapping(address => uint256) public rewards;
 
     constructor(address _rewardToken, address _stakeToken) {
         rewardToken = IERC20(_rewardToken);
@@ -82,7 +82,8 @@ contract StakingDapp {
         require(_amount > 0);
         require(msg.value == ethAmount);
         balanceOfToken[msg.sender] += _amount;
-        stakeToken.transferFrom(address(this), msg.sender, _amount);
+
+        stakeToken.transfer(msg.sender, _amount);
     }
 
     function stake(uint256 _stakeAmount)
@@ -142,11 +143,7 @@ contract StakingDapp {
         }
     }
 
-    ///
-    ///
-    ///
-    //
-    // get functions
+    /////////// GET FUNCTIONS ///////////
 
     function getStakedTokenBalance(address account)
         public
@@ -158,5 +155,17 @@ contract StakingDapp {
 
     function getTokenBalance(address account) public view returns (uint256) {
         return balanceOfToken[account];
+    }
+
+    function getStakeToken(address account) public view returns (uint256) {
+        return stakeToken.balanceOf(account);
+    }
+
+    function getRewardToken(address account) public view returns (uint256) {
+        return rewardToken.balanceOf(account);
+    }
+
+    function getContractETHBalance() public view returns (uint256) {
+        return address(this).balance;
     }
 }
