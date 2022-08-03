@@ -109,13 +109,8 @@ contract StakingDapp {
     function withdrawToken(uint256 amount) external moreThanZero(amount) {
         require(balanceOfToken[msg.sender] >= amount);
         balanceOfToken[msg.sender] -= amount;
-        stakeBalance[msg.sender] -= amount;
 
-        bool success = stakeToken.transferFrom(
-            address(this),
-            msg.sender,
-            amount
-        );
+        bool success = stakeToken.transfer(msg.sender, amount);
         if (!success) {
             revert WithdrawTokenFailed();
         }

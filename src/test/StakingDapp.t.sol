@@ -56,6 +56,15 @@ contract StakingDappTest is Test {
         assertEq(stakingDapp.getContractETHBalance(), 1 ether);
     }
 
+    function testWithdrawToken() public {
+        // withdraw
+        stakingDapp.buyToken{value: 1 ether}(1000 * 10**uint256(18));
+
+        stakingDapp.withdrawToken(1000 * 10**uint256(18));
+
+        assertEq(stakingDapp.balanceOfToken(address(this)), 0);
+    }
+
     function testStake() public {
         stakingDapp.buyToken{value: 1 ether}(1000 * 10**uint256(18));
 
@@ -71,5 +80,32 @@ contract StakingDappTest is Test {
 
         uint256 endingEarned = stakingDapp.earned(address(this));
         console.log(endingEarned);
+    }
+
+    function testWithdrawStakedToken() public {
+        stakingDapp.buyToken{value: 1 ether}(1000 * 10**uint256(18));
+
+        stakingDapp.stake(1000 * 10**uint256(18));
+
+        skip(86400);
+        vm.roll(1);
+
+        stakingDapp.withdrawStakedToken(1000 * 10**uint256(18));
+        assertEq(stakingDapp.getStakedTokenBalance(address(this)), 0);
+    }
+
+    function testClaimRewards() public {
+        stakingDapp.buyToken{value: 1 ether}(1000 * 10**uint256(18));
+
+        stakingDapp.stake(1000 * 10**uint256(18));
+
+        skip(86400);
+        vm.roll(1);
+
+        stakingDapp.claimReward();
+        assertEq(
+            stakingDapp.getRewardToken(address(this)),
+            stakingDapp.earned(address(this))
+        );
     }
 }
