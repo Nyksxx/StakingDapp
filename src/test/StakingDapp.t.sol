@@ -62,5 +62,14 @@ contract StakingDappTest is Test {
         stakingDapp.stake(1000 * 10**uint256(18));
 
         console.log(stakingDapp.getStakeToken(address(this)));
+
+        uint256 startingEarned = stakingDapp.earned(address(this));
+        console.log(startingEarned);
+
+        skip(86400);
+        vm.roll(1);
+
+        uint256 endingEarned = stakingDapp.earned(address(this));
+        console.log(endingEarned);
     }
 }
